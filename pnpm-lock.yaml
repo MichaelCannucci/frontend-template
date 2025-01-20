@@ -20,6 +20,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.1.6
         version: 1.1.6(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.64.2
+        version: 5.64.2(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.95.1
         version: 1.95.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -945,6 +948,14 @@ packages:
   '@tanstack/history@1.95.0':
     resolution: {integrity: sha512-w1/yWuIBqmG0Z0MPMf1OuOCce7FXyVH4L4dIA4rvpnjIUCH8qRUgloFAVg37nTMUbOmhMsY2NZDxCpKBv+CLJg==}
     engines: {node: '>=12'}
+
+  '@tanstack/query-core@5.64.2':
+    resolution: {integrity: sha512-hdO8SZpWXoADNTWXV9We8CwTkXU88OVWRBcsiFrk7xJQnhm6WRlweDzMD+uH+GnuieTBVSML6xFa17C2cNV8+g==}
+
+  '@tanstack/react-query@5.64.2':
+    resolution: {integrity: sha512-3pakNscZNm8KJkxmovvtZ4RaXLyiYYobwleTMvpIGUoKRa8j8VlrQKNl5W8VUEfVfZKkikvXVddLuWMbcSCA1Q==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-router@1.95.1':
     resolution: {integrity: sha512-P5x4yNhcdkYsCEoYeGZP8Q9Jlxf0WXJa4G/xvbmM905seZc9FqJqvCSRvX3dWTPOXRABhl4g+8DHqfft0c/AvQ==}
@@ -2666,6 +2677,13 @@ snapshots:
     optional: true
 
   '@tanstack/history@1.95.0': {}
+
+  '@tanstack/query-core@5.64.2': {}
+
+  '@tanstack/react-query@5.64.2(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.64.2
+      react: 18.3.1
 
   '@tanstack/react-router@1.95.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

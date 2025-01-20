@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { MakeRouteMatchUnion, Outlet, createRootRoute, useRouterState } from '@tanstack/react-router'
+import { MakeRouteMatchUnion, Outlet, createRootRouteWithContext, useRouterState } from '@tanstack/react-router'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
@@ -15,9 +15,10 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { RouteContext } from '@/main'
 
-export const Route = createRootRoute({
-    component: RootComponent,
+export const Route = createRootRouteWithContext<RouteContext>()({
+    component: RootRouteComponent,
 })
 
 const name = (context: MakeRouteMatchUnion): string => {
@@ -30,54 +31,56 @@ const name = (context: MakeRouteMatchUnion): string => {
     }
 
     return context.pathname
+        .substring(1)
         .toLowerCase()
-        .replace(/(?:^|\b)[a-z]/g, (m) => m.toUpperCase())
-        .replace('/', '')
-        .replace('-', ' ')
+        .replace(/(?:^|\b)[a-z]/g, (m: string) => m.toUpperCase())
+        .replace(/\/|\-/g, ' ')
 }
 
-function RootComponent() {
-    const matches = useRouterState({ select: (s) => s.matches })
-
+const buildBreadcrumbs = (matches: MakeRouteMatchUnion[]) => {
     const breadcrumbs = matches.map((context) => {
         return {
-          title: name(context),
-          path: context.pathname,
+            title: name(context),
+            path: context.pathname,
         }
-      })
+    })
 
     // Remove 'Root' layout
     breadcrumbs.shift();
 
-    const lastIndex = breadcrumbs.length - 1;
-    const noBreadcrumbs = breadcrumbs.length <= 0;
+    return breadcrumbs;
+}
+
+function RootRouteComponent() {
+    const matches = useRouterState({ select: (s) => s.matches })
+    const breadcrumbs = buildBreadcrumbs(matches);
+    const activePath = matches[matches.length - 1].pathname;
 
     return (
         <React.Fragment>
             <SidebarProvider>
-                <AppSidebar />
+                <AppSidebar path={activePath} />
                 <SidebarInset>
                     <header className="flex h-16 shrink-0 items-center gap-2 border-b">
                         <div className="flex items-center gap-2 px-3">
                             <SidebarTrigger />
                             <Separator orientation="vertical" className="mr-2 h-4" />
-                            { noBreadcrumbs ? null :
+                            {breadcrumbs.length <= 0 ? null :
                                 <Breadcrumb>
                                     <BreadcrumbList>
                                         {breadcrumbs.map((crumb, index) => (
-                                            <div key={index}>
-                                                <BreadcrumbItem>
-                                                    <BreadcrumbLink href={crumb.path}>
-                                                        <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                                            <span key={`div-${index}`}>
+                                                <BreadcrumbItem key={`item-${index}`}>
+                                                    <BreadcrumbLink key={`link-${index}`} href={crumb.path}>
+                                                        <BreadcrumbPage key={`page-${index}`}>{crumb.title}</BreadcrumbPage>
                                                     </BreadcrumbLink>
                                                 </BreadcrumbItem>
-                                                { index < lastIndex ? <BreadcrumbSeparator className="hidden md:block" /> : null }
-                                            </div>
+                                                { (breadcrumbs.length - 2 >= index) ? <BreadcrumbSeparator key={`separator-${index}`}/> : <span />}
+                                            </span>
                                         ))}
                                     </BreadcrumbList>
                                 </Breadcrumb>
                             }
-
                         </div>
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4">
